@@ -5,30 +5,57 @@ import { Location, LocationDocument } from '../schemas/locations.schema';
 
 @Injectable()
 export class LocationService {
-  constructor(
-    @InjectModel(Location.name) private locationModel: Model<LocationDocument>,
-  ) {}
+    private readonly allowedLimits = [5, 10, 25];
+    constructor(
+        @InjectModel(Location.name) private locationModel: Model<LocationDocument>,
+    ) { }
 
-  async findAll(query?: any) {
-    return this.locationModel.find(query).exec();
-  }
+    async findAll(query: any = {}) {
+        let { page = 1, limit = 10, ...filters } = query;
 
-  async findOne(id: string) {
-    return this.locationModel.findById(id).exec();
-  }
+        page = Number(page);
+        limit = Number(limit);
 
-  async create(createLocationDto: any): Promise<LocationDocument> {
-    const createdLocation = new this.locationModel(createLocationDto);
-    return createdLocation.save();
-  }
+        // Enforce allowed limits
+        if (!this.allowedLimits.includes(limit)) {
+            limit = 10; // default safe fallback
+        }
 
-  async update(id: string, updateLocationDto: any) {
-    return this.locationModel
-      .findByIdAndUpdate(id, updateLocationDto, { new: true })
-      .exec();
-  }
+        const skip = (page - 1) * limit;
 
-  async remove(id: string) {
-    return this.locationModel.findByIdAndDelete(id).exec();
-  }
+        const data = await this.locationModel
+            .find(filters)
+            .skip(skip)
+            .limit(limit)
+            .exec();
+
+        const total = await this.locationModel.countDocuments(filters);
+
+        return {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            data,
+        };
+    }
+
+    async findOne(id: string) {
+        return this.locationModel.findById(id).exec();
+    }
+
+    async create(createLocationDto: any): Promise<LocationDocument> {
+        const createdLocation = new this.locationModel(createLocationDto);
+        return createdLocation.save();
+    }
+
+    async update(id: string, updateLocationDto: any) {
+        return this.locationModel
+            .findByIdAndUpdate(id, updateLocationDto, { new: true })
+            .exec();
+    }
+
+    async remove(id: string) {
+        return this.locationModel.findByIdAndDelete(id).exec();
+    }
 }

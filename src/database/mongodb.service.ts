@@ -7,7 +7,6 @@ export class MongoDbService implements OnModuleInit, OnModuleDestroy {
   constructor(@InjectConnection() private connection: Connection) {}
 
   onModuleInit() {
-    // Check if already connected
     if (this.connection.readyState === 1) {
       console.log('MongoDB connected successfully');
     }
