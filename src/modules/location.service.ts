@@ -20,21 +20,17 @@ export class LocationService {
         if (!this.allowedLimits.includes(limit)) {
             limit = 10;
         }
-
-        // Build a unique cache key
+        
         const cacheKey = `locations:page=${page}:limit=${limit}:filters=${JSON.stringify(
             filters,
         )}`;
-
-        // 1️⃣ Try cache first
+        
         const cached = await this.redisService.get(cacheKey);
         if (cached) {
             return cached;
         }
-
-        // 2️⃣ Cache miss → go to MongoDB
+       
         const skip = (page - 1) * limit;
-
         const data = await this.locationModel
             .find(filters)
             .skip(skip)
@@ -51,9 +47,7 @@ export class LocationService {
             data,
         };
 
-        // 3️⃣ Save result in Redis (with TTL = 60 seconds)
         await this.redisService.set(cacheKey, result, 60); // RedisService.set() already stringifies
-
         return result;
     }
 
