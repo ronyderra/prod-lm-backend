@@ -1,17 +1,41 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+
+import { MongoDbModule } from './database/mongodb.module';
+import { RedisModule } from './database/redis/redis.module';
 
 @Module({
   imports: [
+    // Load .env
     ConfigModule.forRoot({
       isGlobal: true,
     }),
 
+    // Rate limiter
     ThrottlerModule.forRoot({
-      ttl: 60,
-      limit: 60,
+      throttlers: [
+        {
+          ttl: 60,
+          limit: 20,
+        },
+      ],
     }),
+
+    // Database connections
+    MongoDbModule,
+    RedisModule,
+
+    // Add feature modules here
+    // LocationsModule,
+  ],
+
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}
