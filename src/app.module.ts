@@ -2,10 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-
+import { LocationsModule } from './modules/locations.module';
 import { MongoDbModule } from './database/mongodb.module';
 import { RedisModule } from './database/redis/redis.module';
-
 @Module({
   imports: [
     // Load .env
@@ -26,9 +25,9 @@ import { RedisModule } from './database/redis/redis.module';
     // Database connections
     MongoDbModule,
     RedisModule,
-
-    // Add feature modules here
-    // LocationsModule,
+    
+    // Feature modules
+    LocationsModule,
   ],
 
   providers: [
