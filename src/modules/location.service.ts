@@ -72,17 +72,20 @@ export class LocationService {
     }
 
     async create(createLocationDto: any): Promise<LocationDocument> {
-        const createdLocation = new this.locationModel(createLocationDto);
-        const saved = await createdLocation.save();
-      
-        // Clear all location caches (non-blocking)
-        this.redisService
-          .deleteByPattern('locations:*')
-          .then(() => console.log('Redis cache cleared (create)'))
-          .catch(err => console.error('Redis clear error:', err));
-      
-        return saved;
-      }
+        try {
+            const createdLocation = new this.locationModel(createLocationDto);
+            const saved = await createdLocation.save();
+            this.redisService
+                .deleteByPattern('locations:*')
+                .then(() => console.log('Redis cache cleared (create)'))
+                .catch(err => console.error('Redis clear error:', err));
+            return saved;
+        } catch (err) {
+            console.error('Error creating location:', err);
+            throw new Error('Failed to create location');
+        }
+    }
+
 
     async update(id: string, updateLocationDto: any) {
         return this.locationModel
