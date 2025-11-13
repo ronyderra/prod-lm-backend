@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Location, LocationDocument } from '../schemas/locations.schema';
-import { RedisService } from '../database/redis/redis.service';
+import { Location, LocationDocument } from '../../schemas/locations.schema';
+import { RedisService } from '../../database/redis/redis.service';
 @Injectable()
 export class LocationService {
     private readonly allowedLimits = [5, 10, 25];
