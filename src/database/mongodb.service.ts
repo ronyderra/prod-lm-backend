@@ -14,15 +14,15 @@ export class MongoDbService implements OnModuleInit, OnModuleDestroy {
     this.connection.on('connected', () => {
       console.log('MongoDB connected successfully');
     });
-    
+
     this.connection.on('connecting', () => {
       console.log('MongoDB connecting...');
     });
-    
+
     this.connection.on('error', (err) => {
       console.error('MongoDB connection error:', err);
     });
-    
+
     this.connection.on('disconnected', () => {
       console.log('MongoDB disconnected');
     });

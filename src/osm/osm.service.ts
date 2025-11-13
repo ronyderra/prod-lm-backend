@@ -7,7 +7,8 @@ export class OsmService {
   private readonly BASE_URL: string;
 
   constructor(private configService: ConfigService) {
-    this.BASE_URL = this.configService.get<string>('GEO_BASE_URL') || 'https://nominatim.openstreetmap.org';
+    this.BASE_URL =
+      this.configService.get<string>('GEO_BASE_URL') || 'https://nominatim.openstreetmap.org';
   }
 
   async addressToCoordinates(query: string) {
@@ -21,8 +22,8 @@ export class OsmService {
           limit: 1,
         },
         headers: {
-          'User-Agent': 'YourAppName/1.0'
-        }
+          'User-Agent': 'YourAppName/1.0',
+        },
       });
 
       return response.data.length ? response.data[0] : null;
@@ -43,8 +44,8 @@ export class OsmService {
           addressdetails: 1,
         },
         headers: {
-          'User-Agent': 'YourAppName/1.0'
-        }
+          'User-Agent': 'YourAppName/1.0',
+        },
       });
 
       return response.data;
@@ -54,4 +55,3 @@ export class OsmService {
     }
   }
 }
-

@@ -7,4 +7,3 @@ import { OsmController } from './osm.controller';
   providers: [OsmService],
 })
 export class OsmModule {}
-

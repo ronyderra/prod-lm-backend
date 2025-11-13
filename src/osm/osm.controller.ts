@@ -11,11 +11,7 @@ export class OsmController {
   }
 
   @Get('reverse')
-  coordinatesToAddress(
-    @Query('lat') lat: string, 
-    @Query('lon') lon: string
-  ) {
+  coordinatesToAddress(@Query('lat') lat: string, @Query('lon') lon: string) {
     return this.osmService.coordinatesToAddress(lat, lon);
   }
 }
-
