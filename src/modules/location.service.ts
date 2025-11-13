@@ -12,44 +12,60 @@ export class LocationService {
     ) { }
 
     async findAll(query: any = {}) {
-        let { page = 1, limit = 10, ...filters } = query;
-
-        page = Number(page);
-        limit = Number(limit);
-
-        if (!this.allowedLimits.includes(limit)) {
+        try {
+          let { page = 1, limit = 10, ...filters } = query;
+      
+          page = Number(page);
+          limit = Number(limit);
+      
+          if (!this.allowedLimits.includes(limit)) {
             limit = 10;
-        }
-        
-        const cacheKey = `locations:page=${page}:limit=${limit}:filters=${JSON.stringify(
+          }
+      
+          const cacheKey = `locations:page=${page}:limit=${limit}:filters=${JSON.stringify(
             filters,
-        )}`;
-        
-        const cached = await this.redisService.get(cacheKey);
-        if (cached) {
+          )}`;
+          
+          let cached: any = null;
+          try {
+            cached = await this.redisService.get(cacheKey);
+          } catch (redisErr) {
+            console.error('Redis GET error:', redisErr);
+          }
+      
+          if (cached) {
             return cached;
-        }
-       
-        const skip = (page - 1) * limit;
-        const data = await this.locationModel
+          }
+        
+          const skip = (page - 1) * limit;
+          const data = await this.locationModel
             .find(filters)
             .skip(skip)
             .limit(limit)
             .exec();
-
-        const total = await this.locationModel.countDocuments(filters);
-
-        const result = {
+      
+          const total = await this.locationModel.countDocuments(filters);
+          const result = {
             page,
             limit,
             total,
             totalPages: Math.ceil(total / limit),
             data,
-        };
-
-        await this.redisService.set(cacheKey, result, 600); // RedisService.set() already stringifies
-        return result;
-    }
+          };
+         
+          this.redisService
+            .set(cacheKey, result, 600)
+            .then(() => console.log(`Redis cache saved → ${cacheKey}`))
+            .catch(err => console.error('Redis SET error:', err));
+      
+          return result;
+      
+        } catch (err) {
+          console.error('Database error in findAll:', err);
+          throw new Error('Failed to fetch locations');
+        }
+      }
+      
 
 
     async findOne(id: string) {
