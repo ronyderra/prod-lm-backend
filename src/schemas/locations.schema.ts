@@ -8,10 +8,10 @@ export class Location {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ 
-    required: true, 
+  @Prop({
+    required: true,
     enum: ['office', 'store', 'landmark'],
-    type: String 
+    type: String,
   })
   category: 'office' | 'store' | 'landmark';
 
@@ -28,15 +28,16 @@ export class Location {
     lat: number;
   };
 
-  @Prop({ required: false })
+  @Prop()
   address?: string;
 
-  @Prop({ required: false })
+  @Prop()
   notes?: string;
 
-  // createdAt and updatedAt are automatically added by timestamps: true
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export const LocationSchema = SchemaFactory.createForClass(Location);
+
+LocationSchema.index({ category: 1, createdAt: -1 });
