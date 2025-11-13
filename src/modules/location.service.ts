@@ -47,7 +47,7 @@ export class LocationService {
             data,
         };
 
-        await this.redisService.set(cacheKey, result, 60); // RedisService.set() already stringifies
+        await this.redisService.set(cacheKey, result, 600); // RedisService.set() already stringifies
         return result;
     }
 
