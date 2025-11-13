@@ -39,5 +39,4 @@ export class Location {
 }
 
 export const LocationSchema = SchemaFactory.createForClass(Location);
-
 LocationSchema.index({ category: 1, createdAt: -1 });

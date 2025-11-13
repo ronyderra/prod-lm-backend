@@ -7,7 +7,6 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   onModuleInit() {
     this.client = new Redis(process.env.REDIS_URL as string);
-
     this.client.on('connect', () => console.log('Redis connected'));
     this.client.on('error', (err) => console.error('Redis error:', err));
   }
@@ -16,7 +15,6 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     await this.client.quit();
   }
 
-  // Example Redis helpers
   async set(key: string, value: any, ttlSeconds?: number) {
     if (ttlSeconds) {
       return this.client.set(key, JSON.stringify(value), 'EX', ttlSeconds);
