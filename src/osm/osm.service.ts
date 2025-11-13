@@ -37,10 +37,7 @@ export class OsmService {
           format: 'json',
           addressdetails: 1,
           limit: 1,
-        },
-        headers: {
-          'User-Agent': 'YourAppName/1.0',
-        },
+        }
       });
 
       const result = response.data.length ? response.data[0] : null;
@@ -79,10 +76,7 @@ export class OsmService {
           lon,
           format: 'json',
           addressdetails: 1,
-        },
-        headers: {
-          'User-Agent': 'YourAppName/1.0',
-        },
+        }
       });
 
       const result = response.data;
