@@ -37,7 +37,10 @@ export class OsmService {
           format: 'json',
           addressdetails: 1,
           limit: 1,
-        }
+        },
+        headers: {
+          'User-Agent': 'LocationManagementApp/1.0',
+        },
       });
 
       const result = response.data.length ? response.data[0] : null;
@@ -55,7 +58,7 @@ export class OsmService {
     }
   }
 
-  async coordinatesToAddress(lat: string, lon: string) {
+  async coordinatesToAddress(lat: string | number, lon: string | number) {
     try {
       const cacheKey = `osm:coordinatesToAddress:${lat}:${lon}`;
       let cached: any = null;
@@ -76,7 +79,10 @@ export class OsmService {
           lon,
           format: 'json',
           addressdetails: 1,
-        }
+        },
+        headers: {
+          'User-Agent': 'LocationManagementApp/1.0',
+        },
       });
 
       const result = response.data;

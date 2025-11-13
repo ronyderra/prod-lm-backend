@@ -5,14 +5,20 @@ import {
   IsEnum,
   ValidateNested,
   IsNumber,
+  Min,
+  Max,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CoordinatesDto {
   @IsNumber()
+  @Min(-180)
+  @Max(180)
   lon: number;
 
   @IsNumber()
+  @Min(-90)
+  @Max(90)
   lat: number;
 }
 

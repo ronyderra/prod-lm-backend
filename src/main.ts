@@ -6,13 +6,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.use(helmet());
-  app.enableCors();
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  const port = process.env.PORT || 3001;
-  await app.listen(port);
-  console.log(`Server is running on port ${port}`);
+  try {
+    const app = await NestFactory.create(AppModule);
+    app.use(helmet());
+    app.enableCors();
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+    const port = process.env.PORT || 3001;
+    await app.listen(port);
+    console.log(`Server is running on port ${port}`);
+  } catch (error) {
+    console.error('Error starting server:', error);
+    process.exit(1);
+  }
 }
 
 bootstrap();
