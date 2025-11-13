@@ -19,8 +19,6 @@ export class OsmService {
   async addressToCoordinates(query: string) {
     try {
       const cacheKey = `osm:addressToCoordinates:${query.toLowerCase().trim()}`;
-
-      // Try to get from cache first
       let cached: any = null;
       try {
         cached = await this.redisService.get(cacheKey);
@@ -46,8 +44,6 @@ export class OsmService {
       });
 
       const result = response.data.length ? response.data[0] : null;
-
-      // Save to cache (10 minutes TTL)
       if (result) {
         this.redisService
           .set(cacheKey, result, this.CACHE_TTL)
