@@ -13,7 +13,6 @@ export class OsmService {
   async addressToCoordinates(query: string) {
     try {
       const url = `${this.BASE_URL}/search`;
-      
       const response = await axios.get(url, {
         params: {
           q: query,
@@ -27,7 +26,6 @@ export class OsmService {
       });
 
       return response.data.length ? response.data[0] : null;
-
     } catch (err) {
       console.error('Error fetching coordinates:', err);
       throw new Error('Failed to get coordinates from Nominatim');
@@ -37,7 +35,6 @@ export class OsmService {
   async coordinatesToAddress(lat: string, lon: string) {
     try {
       const url = `${this.BASE_URL}/reverse`;
-
       const response = await axios.get(url, {
         params: {
           lat,
@@ -51,7 +48,6 @@ export class OsmService {
       });
 
       return response.data;
-
     } catch (err) {
       console.error('Error reverse geocoding:', err);
       throw new Error('Failed to reverse geocode coordinates');
