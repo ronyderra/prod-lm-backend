@@ -12,6 +12,7 @@ A RESTful API built with NestJS for managing locations with geocoding capabiliti
 - **Rate Limiting**: Built-in throttling (20 requests per 60 seconds)
 - **Validation**: Comprehensive input validation using class-validator
 - **Error Handling**: Proper error handling with meaningful error messages
+- **API Documentation**: Interactive Swagger/OpenAPI documentation
 
 ## 🛠️ Tech Stack
 
@@ -22,6 +23,7 @@ A RESTful API built with NestJS for managing locations with geocoding capabiliti
 - **Geocoding**: OpenStreetMap Nominatim API
 - **Security**: Helmet.js
 - **Validation**: class-validator, class-transformer
+- **API Documentation**: Swagger/OpenAPI (@nestjs/swagger)
 
 ## 📁 Project Structure
 
@@ -88,6 +90,13 @@ npm run dev
 
 The server will start on `http://localhost:3001`
 
+5. Access the Swagger documentation:
+```
+http://localhost:3001/api
+```
+
+The Swagger UI provides interactive API documentation where you can test all endpoints directly from your browser.
+
 ## 📝 Environment Variables
 
 | Variable | Description | Default | Required |
@@ -96,6 +105,22 @@ The server will start on `http://localhost:3001`
 | `MONGO_URI` | MongoDB connection string | - | Yes |
 | `REDIS_URL` | Redis connection string | - | Yes |
 | `GEO_BASE_URL` | OpenStreetMap Nominatim API URL | `https://nominatim.openstreetmap.org` | No |
+
+## 📚 API Documentation
+
+### Swagger UI
+
+Interactive API documentation is available at:
+```
+http://localhost:3001/api
+```
+
+The Swagger UI provides:
+- Complete API documentation with all endpoints
+- Request/response schemas
+- Try it out functionality - test endpoints directly from the browser
+- Example requests and responses
+- Validation rules and constraints
 
 ## 🔌 API Endpoints
 
@@ -112,10 +137,14 @@ Returns API information and available endpoints.
   "endpoints": {
     "health": "/health",
     "locations": "/locations",
-    "osm": "/osm"
+    "osm": "/osm",
+    "swagger": "/api"
   }
 }
 ```
+
+#### `GET /api`
+Swagger UI documentation interface.
 
 #### `GET /health`
 Health check endpoint.
