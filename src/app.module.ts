@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { LocationsModule } from './modules/location/locations.module';
-import { GeoModule } from './modules/geo/geo.module';
+import { OsmModule } from './modules/osm/osm.module';
 import { MongoDbModule } from './database/mongodb.module';
 import { RedisModule } from './database/redis/redis.module';
 @Module({
@@ -24,7 +24,7 @@ import { RedisModule } from './database/redis/redis.module';
     MongoDbModule,
     RedisModule,
     LocationsModule,
-    GeoModule,
+    OsmModule,
   ],
 
   providers: [

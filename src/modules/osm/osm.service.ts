@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 
 @Injectable()
-export class GeoService {
-  private BASE_URL = 'https://nominatim.openstreetmap.org';
+export class OsmService {
+  private readonly BASE_URL: string;
 
-  // Address → Coordinates
+  constructor(private configService: ConfigService) {
+    this.BASE_URL = this.configService.get<string>('GEO_BASE_URL') || 'https://nominatim.openstreetmap.org';
+  }
+
   async addressToCoordinates(query: string) {
     try {
       const url = `${this.BASE_URL}/search`;
@@ -30,7 +34,6 @@ export class GeoService {
     }
   }
 
-  // Coordinates → Address
   async coordinatesToAddress(lat: string, lon: string) {
     try {
       const url = `${this.BASE_URL}/reverse`;
@@ -55,3 +58,4 @@ export class GeoService {
     }
   }
 }
+
