@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { AppController } from './app.controller';
 import { LocationsModule } from './location/locations.module';
 import { OsmModule } from './osm/osm.module';
 import { MongoDbModule } from './database/mongodb.module';
@@ -26,6 +27,8 @@ import { RedisModule } from './database/redis/redis.module';
     LocationsModule,
     OsmModule,
   ],
+
+  controllers: [AppController],
 
   providers: [
     {
