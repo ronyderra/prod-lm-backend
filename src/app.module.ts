@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { LocationsModule } from './modules/location/locations.module';
-import { OsmModule } from './modules/osm/osm.module';
+import { LocationsModule } from './location/locations.module';
+import { OsmModule } from './osm/osm.module';
 import { MongoDbModule } from './database/mongodb.module';
 import { RedisModule } from './database/redis/redis.module';
 @Module({
