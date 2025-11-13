@@ -86,7 +86,6 @@ export class LocationService {
         }
     }
 
-
     async update(id: string, updateLocationDto: any) {
         return this.locationModel
             .findByIdAndUpdate(id, updateLocationDto, { new: true })
