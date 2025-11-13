@@ -28,7 +28,7 @@ export class LocationService {
       try {
         cached = await this.redisService.get(cacheKey);
       } catch (redisErr) {
-        console.error('Redis GET error:', redisErr);
+        console.error('error:', redisErr);
       }
 
       if (cached) {
@@ -54,8 +54,8 @@ export class LocationService {
 
       this.redisService
         .set(cacheKey, result, 600)
-        .then(() => console.log(`Redis cache saved → ${cacheKey}`))
-        .catch((err) => console.error('Redis SET error:', err));
+        .then(() => console.log(`saved: ${cacheKey}`))
+        .catch((err) => console.error('error:', err));
 
       return result;
     } catch (err) {

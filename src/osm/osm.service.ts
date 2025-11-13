@@ -47,8 +47,8 @@ export class OsmService {
       if (result) {
         this.redisService
           .set(cacheKey, result, this.CACHE_TTL)
-          .then(() => console.log(`Redis cache saved → ${cacheKey}`))
-          .catch((err) => console.error('Redis SET error:', err));
+          .then(() => console.log(`saved: ${cacheKey}`))
+          .catch((err) => console.error('error:', err));
       }
 
       return result;
@@ -90,8 +90,8 @@ export class OsmService {
       if (result) {
         this.redisService
           .set(cacheKey, result, this.CACHE_TTL)
-          .then(() => console.log(`Redis cache saved → ${cacheKey}`))
-          .catch((err) => console.error('Redis SET error:', err));
+          .then(() => console.log(`saved: ${cacheKey}`))
+          .catch((err) => console.error('error:', err));
       }
 
       return result;
