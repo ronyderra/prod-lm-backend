@@ -40,6 +40,7 @@ export class LocationService {
             const skip = (page - 1) * limit;
             const data = await this.locationModel
                 .find(filters)
+                .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit)
                 .exec();
@@ -72,8 +73,16 @@ export class LocationService {
 
     async create(createLocationDto: any): Promise<LocationDocument> {
         const createdLocation = new this.locationModel(createLocationDto);
-        return createdLocation.save();
-    }
+        const saved = await createdLocation.save();
+      
+        // Clear all location caches (non-blocking)
+        this.redisService
+          .deleteByPattern('locations:*')
+          .then(() => console.log('Redis cache cleared (create)'))
+          .catch(err => console.error('Redis clear error:', err));
+      
+        return saved;
+      }
 
     async update(id: string, updateLocationDto: any) {
         return this.locationModel
