@@ -67,10 +67,6 @@ export class LocationService {
         }
     }
 
-    async findOne(id: string) {
-        return this.locationModel.findById(id).exec();
-    }
-
     async create(createLocationDto: any): Promise<LocationDocument> {
         try {
             const createdLocation = new this.locationModel(createLocationDto);
@@ -79,6 +75,7 @@ export class LocationService {
                 .deleteByPattern('locations:*')
                 .then(() => console.log('Redis cache cleared (create)'))
                 .catch(err => console.error('Redis clear error:', err));
+
             return saved;
         } catch (err) {
             console.error('Error creating location:', err);
@@ -87,12 +84,35 @@ export class LocationService {
     }
 
     async update(id: string, updateLocationDto: any) {
-        return this.locationModel
-            .findByIdAndUpdate(id, updateLocationDto, { new: true })
-            .exec();
+        try {
+            const updated = await this.locationModel
+                .findByIdAndUpdate(id, updateLocationDto, { new: true })
+                .exec();
+            this.redisService
+                .deleteByPattern('locations:*')
+                .then(() => console.log('Redis cache cleared (update)'))
+                .catch(err => console.error('Redis clear error:', err));
+
+            return updated;
+        } catch (err) {
+            console.error('Error updating location:', err);
+            throw new Error('Failed to update location');
+        }
     }
 
     async remove(id: string) {
-        return this.locationModel.findByIdAndDelete(id).exec();
+        try {
+            const deleted = await this.locationModel.findByIdAndDelete(id).exec();
+            this.redisService
+                .deleteByPattern('locations:*')
+                .then(() => console.log('Redis cache cleared (delete)'))
+                .catch(err => console.error('Redis clear error:', err));
+
+            return deleted;
+        } catch (err) {
+            console.error('Error deleting location:', err);
+            throw new Error('Failed to delete location');
+        }
     }
+
 }

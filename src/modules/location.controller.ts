@@ -11,11 +11,6 @@ export class LocationController {
     return this.locationService.findAll(query);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.locationService.findOne(id);
-  }
-
   @Post()
   create(@Body() createLocationDto: CreateLocationDto) {
     return this.locationService.create(createLocationDto);
