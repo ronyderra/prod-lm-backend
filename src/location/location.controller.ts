@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { LocationService } from './location.service';
-import { CreateLocationDto } from './create-location.dto';
+import { CreateLocationDto, FindLocationsQueryDto } from './location.dto';
 import { ApiFindAllLocations, ApiCreateLocation, ApiUpdateLocation, ApiDeleteLocation } from '../common/decorators/swagger.decorators';
 
 @ApiTags('locations')
@@ -11,7 +11,7 @@ export class LocationController {
 
   @Get()
   @ApiFindAllLocations()
-  findAll(@Query() query: any) {
+  findAll(@Query() query: FindLocationsQueryDto) {
     return this.locationService.findAll(query);
   }
 

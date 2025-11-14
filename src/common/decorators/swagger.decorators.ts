@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
-import { CreateLocationDto } from '../../location/create-location.dto';
+import { CreateLocationDto } from '../../location/location.dto';
 
 // Location endpoints decorators
 export const ApiFindAllLocations = () =>

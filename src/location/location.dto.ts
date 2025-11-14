@@ -11,7 +11,7 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CoordinatesDto {
+class CoordinatesDto {
   @ApiProperty({
     description: 'Longitude coordinate',
     example: -122.4194,
@@ -76,3 +76,46 @@ export class CreateLocationDto {
   @IsString()
   notes?: string;
 }
+
+export class FindLocationsQueryDto {
+  @ApiPropertyOptional({
+    description: 'Page number',
+    example: 1,
+    minimum: 1,
+    default: 1,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  page?: number;
+
+  @ApiPropertyOptional({
+    description: 'Items per page',
+    example: 10,
+    enum: [5, 10, 25],
+    default: 10,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  limit?: number;
+
+  @ApiPropertyOptional({
+    description: 'Filter by category',
+    enum: ['office', 'store', 'landmark'],
+    example: 'office',
+  })
+  @IsOptional()
+  @IsEnum(['office', 'store', 'landmark'])
+  category?: 'office' | 'store' | 'landmark';
+
+  @ApiPropertyOptional({
+    description: 'Filter by name',
+    example: 'Downtown',
+  })
+  @IsOptional()
+  @IsString()
+  name?: string;
+}
+

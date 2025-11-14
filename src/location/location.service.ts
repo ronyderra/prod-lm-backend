@@ -3,65 +3,51 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Location, LocationDocument } from '../schemas/locations.schema';
 import { RedisService } from '../database/redis/redis.service';
+import { FindLocationsQueryDto } from './location.dto';
 @Injectable()
 export class LocationService {
   private readonly allowedLimits = [5, 10, 25];
   constructor(
     @InjectModel(Location.name) private locationModel: Model<LocationDocument>,
     private readonly redisService: RedisService,
-  ) {}
+  ) { }
 
-  async findAll(query: any = {}) {
+  async findAll(query: FindLocationsQueryDto = {}) {
+    const { page = 1, limit = 10, ...filters } = query;
+    const validLimit = this.allowedLimits.includes(limit) ? limit : 10;
+    const cacheKey = `locations:page=${page}:limit=${validLimit}:filters=${JSON.stringify(filters)}`;
+
     try {
-      let { page = 1, limit = 10, ...filters } = query;
-
-      page = Number(page);
-      limit = Number(limit);
-
-      if (!this.allowedLimits.includes(limit)) {
-        limit = 10;
-      }
-
-      const cacheKey = `locations:page=${page}:limit=${limit}:filters=${JSON.stringify(filters)}`;
-
-      let cached: any = null;
-      try {
-        cached = await this.redisService.get(cacheKey);
-      } catch (redisErr) {
-        console.error('error:', redisErr);
-      }
-
-      if (cached) {
-        return cached;
-      }
-
-      const skip = (page - 1) * limit;
-      const data = await this.locationModel
-        .find(filters)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec();
-
-      const total = await this.locationModel.countDocuments(filters);
-      const result = {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-        data,
-      };
-
-      this.redisService
-        .set(cacheKey, result, 600)
-        .then(() => console.log(`saved: ${cacheKey}`))
-        .catch((err) => console.error('error:', err));
-
-      return result;
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) return cached;
     } catch (err) {
-      console.error('Database error in findAll:', err);
-      throw new Error('Failed to fetch locations');
+      console.error('Redis GET error:', err);
     }
+
+    const skip = (page - 1) * validLimit;
+    const data = await this.locationModel
+      .find(filters)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(validLimit)
+      .exec();
+
+    const total = await this.locationModel.countDocuments(filters);
+    const result = {
+      page,
+      limit: validLimit,
+      total,
+      totalPages: Math.ceil(total / validLimit),
+      data,
+    };
+
+   
+    this.redisService
+      .set(cacheKey, result, 600)
+      .then(() => console.log(`saved: ${cacheKey}`))
+      .catch((err) => console.error('Redis SET error:', err));
+
+    return result;
   }
 
   async create(createLocationDto: any): Promise<LocationDocument> {
