@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { LocationService } from './location.service';
-import { CreateLocationDto, FindLocationsQueryDto } from './location.dto';
+import { CreateLocationDto, FindLocationsQueryDto, UpdateLocationDto } from './location.dto';
 import { ApiFindAllLocations, ApiCreateLocation, ApiUpdateLocation, ApiDeleteLocation } from '../common/decorators/swagger.decorators';
 
 @ApiTags('locations')
@@ -23,7 +23,7 @@ export class LocationController {
 
   @Put(':id')
   @ApiUpdateLocation()
-  update(@Param('id') id: string, @Body() updateLocationDto: any) {
+  update(@Param('id') id: string, @Body() updateLocationDto: UpdateLocationDto) {
     return this.locationService.update(id, updateLocationDto);
   }
 

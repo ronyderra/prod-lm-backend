@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
-import { CreateLocationDto } from '../../location/location.dto';
+import { CreateLocationDto, UpdateLocationDto } from '../../location/location.dto';
 
 // Location endpoints decorators
 export const ApiFindAllLocations = () =>
@@ -25,7 +25,7 @@ export const ApiUpdateLocation = () =>
   applyDecorators(
     ApiOperation({ summary: 'Update a location by ID' }),
     ApiParam({ name: 'id', description: 'Location ID', example: '507f1f77bcf86cd799439011' }),
-    ApiBody({ type: CreateLocationDto }),
+    ApiBody({ type: UpdateLocationDto }),
     ApiResponse({ status: 200, description: 'Location updated successfully' }),
     ApiResponse({ status: 404, description: 'Location not found' }),
     ApiResponse({ status: 400, description: 'Validation error' }),

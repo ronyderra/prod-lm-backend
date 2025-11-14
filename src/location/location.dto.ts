@@ -77,6 +77,51 @@ export class CreateLocationDto {
   notes?: string;
 }
 
+export class UpdateLocationDto {
+  @ApiPropertyOptional({
+    description: 'Location name',
+    example: 'Downtown Office',
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  name?: string;
+
+  @ApiPropertyOptional({
+    description: 'Location category',
+    enum: ['office', 'store', 'landmark'],
+    example: 'office',
+  })
+  @IsOptional()
+  @IsEnum(['office', 'store', 'landmark'])
+  category?: 'office' | 'store' | 'landmark';
+
+  @ApiPropertyOptional({
+    description: 'Location coordinates',
+    type: CoordinatesDto,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CoordinatesDto)
+  coordinates?: CoordinatesDto;
+
+  @ApiPropertyOptional({
+    description: 'Location address',
+    example: '123 Main Street, New York, NY 10001',
+  })
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @ApiPropertyOptional({
+    description: 'Additional notes about the location',
+    example: 'Main retail location with parking available',
+  })
+  @IsOptional()
+  @IsString()
+  notes?: string;
+}
+
 export class FindLocationsQueryDto {
   @ApiPropertyOptional({
     description: 'Page number',
