@@ -17,87 +17,69 @@ export class OsmService {
   }
 
   async addressToCoordinates(query: string) {
+    const cacheKey = `osm:addressToCoordinates:${query.toLowerCase().trim()}`;
     try {
-      const cacheKey = `osm:addressToCoordinates:${query.toLowerCase().trim()}`;
-      let cached: any = null;
-      try {
-        cached = await this.redisService.get(cacheKey);
-      } catch (redisErr) {
-        console.error('Redis GET error:', redisErr);
-      }
-
-      if (cached) {
-        return cached;
-      }
-
-      const url = `${this.BASE_URL}/search`;
-      const response = await axios.get(url, {
-        params: {
-          q: query,
-          format: 'json',
-          addressdetails: 1,
-          limit: 1,
-        },
-        headers: {
-          'User-Agent': 'LocationManagementApp/1.0',
-        },
-      });
-
-      const result = response.data.length ? response.data[0] : null;
-      if (result) {
-        this.redisService
-          .set(cacheKey, result, this.CACHE_TTL)
-          .then(() => console.log(`saved: ${cacheKey}`))
-          .catch((err) => console.error('error:', err));
-      }
-
-      return result;
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) return cached;
     } catch (err) {
-      console.error('Error fetching coordinates:', err);
-      throw new Error('Failed to get coordinates from Nominatim');
+      console.error('Redis GET error:', err);
     }
+
+    const url = `${this.BASE_URL}/search`;
+    const response = await axios.get(url, {
+      params: {
+        q: query,
+        format: 'json',
+        addressdetails: 1,
+        limit: 1,
+      },
+      headers: {
+        'User-Agent': 'LocationManagementApp/1.0',
+      },
+    });
+
+    const result = response.data.length ? response.data[0] : null;
+    if (result) {
+      this.redisService
+        .set(cacheKey, result, this.CACHE_TTL)
+        .then(() => console.log(`Redis cache saved → ${cacheKey}`))
+        .catch((err) => console.error('Redis SET error:', err));
+    }
+
+    return result;
   }
 
   async coordinatesToAddress(lat: string | number, lon: string | number) {
+    const cacheKey = `osm:coordinatesToAddress:${lat}:${lon}`;
     try {
-      const cacheKey = `osm:coordinatesToAddress:${lat}:${lon}`;
-      let cached: any = null;
-      try {
-        cached = await this.redisService.get(cacheKey);
-      } catch (redisErr) {
-        console.error('Redis GET error:', redisErr);
-      }
-
-      if (cached) {
-        return cached;
-      }
-
-      const url = `${this.BASE_URL}/reverse`;
-      const response = await axios.get(url, {
-        params: {
-          lat,
-          lon,
-          format: 'json',
-          addressdetails: 1,
-        },
-        headers: {
-          'User-Agent': 'LocationManagementApp/1.0',
-        },
-      });
-
-      const result = response.data;
-
-      if (result) {
-        this.redisService
-          .set(cacheKey, result, this.CACHE_TTL)
-          .then(() => console.log(`saved: ${cacheKey}`))
-          .catch((err) => console.error('error:', err));
-      }
-
-      return result;
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) return cached;
     } catch (err) {
-      console.error('Error reverse geocoding:', err);
-      throw new Error('Failed to reverse geocode coordinates');
+      console.error('Redis GET error:', err);
     }
+
+    const url = `${this.BASE_URL}/reverse`;
+    const response = await axios.get(url, {
+      params: {
+        lat,
+        lon,
+        format: 'json',
+        addressdetails: 1,
+      },
+      headers: {
+        'User-Agent': 'LocationManagementApp/1.0',
+      },
+    });
+
+    const result = response.data;
+
+    if (result) {
+      this.redisService
+        .set(cacheKey, result, this.CACHE_TTL)
+        .then(() => console.log(`Redis cache saved → ${cacheKey}`))
+        .catch((err) => console.error('Redis SET error:', err));
+    }
+
+    return result;
   }
 }
