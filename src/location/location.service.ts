@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Location, LocationDocument } from '../schemas/locations.schema';
 import { RedisService } from '../database/redis/redis.service';
-import { FindLocationsQueryDto } from './location.dto';
+import { FindLocationsQueryDto, CreateLocationDto } from './location.dto';
 @Injectable()
 export class LocationService {
   private readonly allowedLimits = [5, 10, 25];
@@ -50,20 +50,16 @@ export class LocationService {
     return result;
   }
 
-  async create(createLocationDto: any): Promise<LocationDocument> {
-    try {
-      const createdLocation = new this.locationModel(createLocationDto);
-      const saved = await createdLocation.save();
-      this.redisService
-        .deleteByPattern('locations:*')
-        .then(() => console.log('Redis cache cleared (create)'))
-        .catch((err) => console.error('Redis clear error:', err));
+  async create(createLocationDto: CreateLocationDto): Promise<LocationDocument> {
+    const createdLocation = new this.locationModel(createLocationDto);
+    const saved = await createdLocation.save();
+    
+    this.redisService
+      .deleteByPattern('locations:*')
+      .then(() => console.log('Redis cache cleared (create)'))
+      .catch((err) => console.error('Redis clear error:', err));
 
-      return saved;
-    } catch (err) {
-      console.error('Error creating location:', err);
-      throw new Error('Failed to create location');
-    }
+    return saved;
   }
 
   async update(id: string, updateLocationDto: any) {
