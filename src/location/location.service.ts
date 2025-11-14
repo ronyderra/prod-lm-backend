@@ -43,7 +43,7 @@ export class LocationService {
 
 
     this.redisService
-      .set(cacheKey, result, 600)
+      .set(cacheKey, JSON.stringify(result), 600)
       .then(() => console.log(`saved: ${cacheKey}`))
       .catch((err) => console.error('Redis SET error:', err));
 

@@ -15,11 +15,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     await this.client.quit();
   }
 
-  async set(key: string, value: any, ttlSeconds?: number) {
+  async set(key: string, value: string, ttlSeconds?: number) {
     if (ttlSeconds) {
-      return this.client.set(key, JSON.stringify(value), 'EX', ttlSeconds);
+      return this.client.set(key, value, 'EX', ttlSeconds);
     }
-    return this.client.set(key, JSON.stringify(value));
+    return this.client.set(key, value);
   }
 
   async get<T>(key: string): Promise<T | null> {
