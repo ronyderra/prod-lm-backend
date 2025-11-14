@@ -41,7 +41,7 @@ export class LocationService {
       data,
     };
 
-   
+
     this.redisService
       .set(cacheKey, result, 600)
       .then(() => console.log(`saved: ${cacheKey}`))
@@ -50,10 +50,10 @@ export class LocationService {
     return result;
   }
 
-  async create(createLocationDto: CreateLocationDto): Promise<LocationDocument> {
+  async create(createLocationDto: CreateLocationDto) {
     const createdLocation = new this.locationModel(createLocationDto);
     const saved = await createdLocation.save();
-    
+
     this.redisService
       .deleteByPattern('locations:*')
       .then(() => console.log('Redis cache cleared (create)'))
