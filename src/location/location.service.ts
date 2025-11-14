@@ -76,17 +76,13 @@ export class LocationService {
   }
 
   async remove(id: string) {
-    try {
-      const deleted = await this.locationModel.findByIdAndDelete(id).exec();
-      this.redisService
-        .deleteByPattern('locations:*')
-        .then(() => console.log('Redis cache cleared (delete)'))
-        .catch((err) => console.error('Redis clear error:', err));
+    const deleted = await this.locationModel.findByIdAndDelete(id).exec();
 
-      return deleted;
-    } catch (err) {
-      console.error('Error deleting location:', err);
-      throw new Error('Failed to delete location');
-    }
+    this.redisService
+      .deleteByPattern('locations:*')
+      .then(() => console.log('Redis cache cleared (delete)'))
+      .catch((err) => console.error('Redis clear error:', err));
+
+    return deleted;
   }
 }
