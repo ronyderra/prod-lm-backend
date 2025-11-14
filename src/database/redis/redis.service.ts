@@ -22,7 +22,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return this.client.set(key, value);
   }
 
-  async get<T>(key: string): Promise<T | null> {
+  async get<T>(key: string) {
     const data = await this.client.get(key);
     return data ? JSON.parse(data) : null;
   }
@@ -31,7 +31,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return this.client.del(key);
   }
 
-  async deleteByPattern(pattern: string): Promise<void> {
+  async deleteByPattern(pattern: string) {
     const stream = this.client.scanStream({
       match: pattern,
       count: 100,
