@@ -2,7 +2,7 @@ import { Controller, Get, Query, BadRequestException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { OsmService } from './osm.service';
 import { AddressToCoordinatesDto, CoordinatesToAddressDto } from './osm.dto';
-import { ApiAddressToCoordinates, ApiCoordinatesToAddress } from '../common/decorators/swagger.decorators';
+import { ApiAddressToCoordinates, ApiCoordinatesToAddress } from '../config/swagger.config';
 
 @ApiTags('osm')
 @Controller('osm')

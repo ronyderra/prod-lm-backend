@@ -1,16 +1,28 @@
+import { DocumentBuilder } from '@nestjs/swagger';
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
-import { CreateLocationDto, UpdateLocationDto } from '../../location/location.dto';
+import { CreateLocationDto, UpdateLocationDto } from '../location/location.dto';
+
+// Swagger Document Configuration
+export const swaggerConfig = new DocumentBuilder()
+  .setTitle('Location Management API')
+  .setDescription('A RESTful API for managing locations with geocoding capabilities using OpenStreetMap')
+  .setVersion('1.0.0')
+  .addTag('locations', 'Location management endpoints')
+  .addTag('osm', 'OpenStreetMap geocoding endpoints')
+  .addTag('health', 'Health check endpoints')
+  .build();
 
 // Location endpoints decorators
 export const ApiFindAllLocations = () =>
   applyDecorators(
     ApiOperation({ summary: 'Get all locations with pagination and filtering' }),
     ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (default: 1)', example: 1 }),
-    ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page (allowed: 5, 10, 25)', example: 10 }),
     ApiQuery({ name: 'category', required: false, enum: ['office', 'store', 'landmark'], description: 'Filter by category' }),
-    ApiQuery({ name: 'name', required: false, type: String, description: 'Filter by name' }),
-    ApiResponse({ status: 200, description: 'Returns paginated list of locations' }),
+    ApiResponse({ 
+      status: 200, 
+      description: 'Returns paginated list of locations. Limit is fixed at 10 items per page.' 
+    }),
   );
 
 export const ApiCreateLocation = () =>
@@ -58,4 +70,3 @@ export const ApiCoordinatesToAddress = () =>
     ApiResponse({ status: 400, description: 'Invalid coordinates' }),
     ApiResponse({ status: 500, description: 'Failed to reverse geocode coordinates' }),
   );
-

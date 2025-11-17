@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/
 import { ApiTags } from '@nestjs/swagger';
 import { LocationService } from './location.service';
 import { CreateLocationDto, FindLocationsQueryDto, UpdateLocationDto } from './location.dto';
-import { ApiFindAllLocations, ApiCreateLocation, ApiUpdateLocation, ApiDeleteLocation } from '../common/decorators/swagger.decorators';
+import { ApiFindAllLocations, ApiCreateLocation, ApiUpdateLocation, ApiDeleteLocation } from '../config/swagger.config';
 
 @ApiTags('locations')
 @Controller('locations')

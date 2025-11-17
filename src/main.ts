@@ -2,7 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
+import { swaggerConfig } from './config/swagger.config';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -13,16 +14,7 @@ async function bootstrap() {
     app.enableCors();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-    // Swagger configuration
-    const config = new DocumentBuilder()
-      .setTitle('Location Management API')
-      .setDescription('A RESTful API for managing locations with geocoding capabilities using OpenStreetMap')
-      .setVersion('1.0.0')
-      .addTag('locations', 'Location management endpoints')
-      .addTag('osm', 'OpenStreetMap geocoding endpoints')
-      .addTag('health', 'Health check endpoints')
-      .build();
-    const document = SwaggerModule.createDocument(app, config);
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('api', app, document);
 
     const port = process.env.PORT || 3001;
