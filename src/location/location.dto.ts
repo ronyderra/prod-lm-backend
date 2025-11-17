@@ -136,17 +136,6 @@ export class FindLocationsQueryDto {
   page?: number;
 
   @ApiPropertyOptional({
-    description: 'Items per page',
-    example: 10,
-    enum: [5, 10, 25],
-    default: 10,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  limit?: number;
-
-  @ApiPropertyOptional({
     description: 'Filter by category',
     enum: ['office', 'store', 'landmark'],
     example: 'office',
@@ -154,13 +143,5 @@ export class FindLocationsQueryDto {
   @IsOptional()
   @IsEnum(['office', 'store', 'landmark'])
   category?: 'office' | 'store' | 'landmark';
-
-  @ApiPropertyOptional({
-    description: 'Filter by name',
-    example: 'Downtown',
-  })
-  @IsOptional()
-  @IsString()
-  name?: string;
 }
 

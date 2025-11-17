@@ -6,41 +6,39 @@ import { RedisService } from '../database/redis/redis.service';
 import { FindLocationsQueryDto, CreateLocationDto, UpdateLocationDto } from './location.dto';
 @Injectable()
 export class LocationService {
-  private readonly allowedLimits = [5, 10, 25];
+  private readonly limit = 10;
   constructor(
     @InjectModel(Location.name) private locationModel: Model<LocationDocument>,
     private readonly redisService: RedisService,
   ) { }
 
   async findAll(query: FindLocationsQueryDto = {}) {
-    const { page = 1, limit = 10, ...filters } = query;
-    const validLimit = this.allowedLimits.includes(limit) ? limit : 10;
-    const cacheKey = `locations:page=${page}:limit=${validLimit}:filters=${JSON.stringify(filters)}`;
+    const { page = 1, ...filters } = query;
+    const cacheKey = `locations:page=${page}:limit=${this.limit}:filters=${JSON.stringify(filters)}`;
 
     try {
       const cached = await this.redisService.get(cacheKey);
       if (cached) return cached;
     } catch (err) {
-      console.error('Redis GET error:', err);
+      console.error('Redis failed on GET operation:', err);
     }
 
-    const skip = (page - 1) * validLimit;
+    const skip = (page - 1) * this.limit;
     const data = await this.locationModel
       .find(filters)
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(validLimit)
+      .limit(this.limit)
       .exec();
 
     const total = await this.locationModel.countDocuments(filters);
     const result = {
       page,
-      limit: validLimit,
+      limit: this.limit,
       total,
-      totalPages: Math.ceil(total / validLimit),
+      totalPages: Math.ceil(total / this.limit),
       data,
     };
-
 
     this.redisService
       .set(cacheKey, JSON.stringify(result), 600)
