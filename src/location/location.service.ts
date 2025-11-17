@@ -4,12 +4,16 @@ import { Model } from 'mongoose';
 import { Location, LocationDocument } from '../schemas/locations.schema';
 import { RedisService } from '../database/redis/redis.service';
 import { FindLocationsQueryDto, CreateLocationDto, UpdateLocationDto } from './location.dto';
+import { OsmService } from '../osm/osm.service';
+
 @Injectable()
 export class LocationService {
   private readonly limit = 10;
+
   constructor(
     @InjectModel(Location.name) private locationModel: Model<LocationDocument>,
     private readonly redisService: RedisService,
+    private readonly osmService: OsmService,
   ) { }
 
   async findAll(query: FindLocationsQueryDto = {}) {
@@ -49,10 +53,22 @@ export class LocationService {
   }
 
   async create(createLocationDto: CreateLocationDto) {
+    if (!createLocationDto.address || createLocationDto.address.trim() === '') {
+      const osmResult = await this.osmService.coordinatesToAddress(
+        createLocationDto.coordinates.lat,
+        createLocationDto.coordinates.lon,
+      );
+      if (osmResult?.address) {
+        const address = osmResult.address;
+        createLocationDto.address = [address.city, address.country || osmResult.display_name]
+          .filter(Boolean)
+          .join(', ');
+      }
+    }
     const createdLocation = new this.locationModel(createLocationDto);
     const saved = await createdLocation.save();
 
-    this.redisService
+    await this.redisService
       .deleteByPattern('locations:*')
       .then(() => console.log('Redis cache cleared (create)'))
       .catch((err) => console.error('Redis clear error:', err));
@@ -65,7 +81,7 @@ export class LocationService {
       .findByIdAndUpdate(id, updateLocationDto, { new: true })
       .exec();
 
-    this.redisService
+    await this.redisService
       .deleteByPattern('locations:*')
       .then(() => console.log('Redis cache cleared (update)'))
       .catch((err) => console.error('Redis clear error:', err));
@@ -76,7 +92,7 @@ export class LocationService {
   async remove(id: string) {
     const deleted = await this.locationModel.findByIdAndDelete(id).exec();
 
-    this.redisService
+    await this.redisService
       .deleteByPattern('locations:*')
       .then(() => console.log('Redis cache cleared (delete)'))
       .catch((err) => console.error('Redis clear error:', err));

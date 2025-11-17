@@ -7,5 +7,6 @@ import { RedisModule } from '../database/redis/redis.module';
   imports: [RedisModule],
   controllers: [OsmController],
   providers: [OsmService],
+  exports: [OsmService],
 })
 export class OsmModule {}
