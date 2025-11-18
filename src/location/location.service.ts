@@ -4,16 +4,17 @@ import { Model } from 'mongoose';
 import { Location, LocationDocument } from '../schemas/locations.schema';
 import { RedisService } from '../database/redis/redis.service';
 import { FindLocationsQueryDto, CreateLocationDto, UpdateLocationDto } from './location.dto';
+import { EventsService } from '../events/events.service';
 import { OsmService } from '../osm/osm.service';
 
 @Injectable()
 export class LocationService {
   private readonly limit = 10;
-
   constructor(
     @InjectModel(Location.name) private locationModel: Model<LocationDocument>,
     private readonly redisService: RedisService,
     private readonly osmService: OsmService,
+    private readonly events: EventsService,
   ) { }
 
   async findAll(query: FindLocationsQueryDto = {}) {
@@ -67,12 +68,13 @@ export class LocationService {
     }
     const createdLocation = new this.locationModel(createLocationDto);
     const saved = await createdLocation.save();
-
+   
     await this.redisService
       .deleteByPattern('locations:*')
       .then(() => console.log('Redis cache cleared (create)'))
       .catch((err) => console.error('Redis clear error:', err));
 
+    this.events.broadcast({ type: 'refetch_locations' });
     return saved;
   }
 
@@ -86,6 +88,7 @@ export class LocationService {
       .then(() => console.log('Redis cache cleared (update)'))
       .catch((err) => console.error('Redis clear error:', err));
 
+    this.events.broadcast({ type: 'refetch_locations' });
     return updated;
   }
 
@@ -97,6 +100,7 @@ export class LocationService {
       .then(() => console.log('Redis cache cleared (delete)'))
       .catch((err) => console.error('Redis clear error:', err));
 
+    this.events.broadcast({ type: 'refetch_locations' });
     return deleted;
   }
 }

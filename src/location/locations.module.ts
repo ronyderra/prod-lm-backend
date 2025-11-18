@@ -5,12 +5,14 @@ import { LocationService } from './location.service';
 import { Location, LocationSchema } from '../schemas/locations.schema';
 import { RedisModule } from '../database/redis/redis.module';
 import { OsmModule } from '../osm/osm.module';
+import { EventsModule } from '../events/events.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Location.name, schema: LocationSchema }]),
     RedisModule,
     OsmModule,
+    EventsModule
   ],
   controllers: [LocationController],
   providers: [LocationService],
