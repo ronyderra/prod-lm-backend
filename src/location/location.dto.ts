@@ -77,5 +77,9 @@ export class FindLocationsQueryDto {
   @IsOptional()
   @IsEnum(['office', 'store', 'landmark'])
   category?: 'office' | 'store' | 'landmark';
+
+  @IsOptional()
+  @IsString()
+  name?: string | {};
 }
 
